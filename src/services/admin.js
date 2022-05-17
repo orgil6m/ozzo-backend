@@ -24,7 +24,7 @@ module.exports = function (app, connection) {
   });
 
   // endpoints
-  app.get("/api/ozzo/users", async (req, res) => {
+  app.get("/api/ozzo/users", isAuth,  async (req, res) => {
     try {
       logger.info(`${req.ip} /ozzo/users [get]`);
       getUsers(req, res, connection);
@@ -34,9 +34,9 @@ module.exports = function (app, connection) {
     }
   });
 
-  app.post("/api/ozzo/getUser", isAuth, async (req, res) => {
+  app.get("/api/ozzo/getUser", isAuth, async (req, res) => {
     try {
-      logger.info(`${req.ip} /ozzo/getUser [post]`);
+      logger.info(`${req.ip} /ozzo/getUser [get]`);
       console.log(req.body)
       getUser(req, res, connection);
     } catch (err) {
