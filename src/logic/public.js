@@ -108,6 +108,32 @@ const getProducts = async (request, response, pool) => {
   }
 };
 
+const postMessage = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("messages");
+    await collection.insertOne(request.body);
+    return response.status(200).json({ message: "Хүсэлт Амжилттай" });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return; 
+  }
+};
+
+const getMessages = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("messages");
+    const rows = await collection.find({}).toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+
 module.exports = {
  getNews,
  insertNews,
@@ -115,5 +141,7 @@ module.exports = {
  getArtists,
  getUsersID,
  getTeachers,
- getProducts
+ getProducts,
+ postMessage,
+ getMessages
 };

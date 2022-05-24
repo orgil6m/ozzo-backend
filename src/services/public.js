@@ -6,6 +6,8 @@ const {
    getTeachers,
    getProducts,
    getUsersID,
+   postMessage,
+   getMessages,
 } = require("../logic/public");
 
 const { logger } = require("../common/log");
@@ -75,6 +77,26 @@ module.exports = function (app, connection) {
     try {
       logger.info(`${req.ip} /ozzo/products [get]`);
       getProducts(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post("/api/ozzo/message", async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/message [post]`);
+      postMessage(req, res, connection);
+    }
+    catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  })
+  app.get("/api/ozzo/messages", async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/messages [get]`);
+      getMessages(req, res, connection);
     } catch (err) {
       logger.error(`${req.ip} ${err}`);
       res.status(500).json({ error: err.message });

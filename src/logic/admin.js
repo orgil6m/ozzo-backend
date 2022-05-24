@@ -111,6 +111,23 @@ const updateUser = async (request, response, pool) => {
   }
 };
 
+
+const deleteMessage = async (request, response, pool) => {
+  try {
+    const { _id } = request.body;
+    const collection = pool.collection("messages");
+    const deleteResult = await collection.deleteOne({
+      _id: new mongodb.ObjectID(_id),
+    });
+    logger.info(`Deleted documents id:${_id} => ${deleteResult.deletedCount}`);
+    return response.status(200).json({ message: "success" });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+
 module.exports = {
   login,
   getUsers,
@@ -118,4 +135,5 @@ module.exports = {
   insertUser,
   deleteUser,
   updateUser,
+  deleteMessage
 };

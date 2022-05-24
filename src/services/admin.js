@@ -6,6 +6,7 @@ const {
   deleteUser,
   getUser,
   login,
+  deleteMessage
 } = require("../logic/admin");
 
 const { logger } = require("../common/log");
@@ -24,7 +25,7 @@ module.exports = function (app, connection) {
   });
 
   // endpoints
-  app.get("/api/ozzo/users", isAuth,  async (req, res) => {
+  app.get("/api/ozzo/users",  async (req, res) => {
     try {
       logger.info(`${req.ip} /ozzo/users [get]`);
       getUsers(req, res, connection);
@@ -74,5 +75,14 @@ module.exports = function (app, connection) {
       res.status(500).json({ error: err.message });
     }
   });
-
+  
+  app.delete("/api/ozzo/message", async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/message [delete]`);
+      deleteMessage(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
 };
