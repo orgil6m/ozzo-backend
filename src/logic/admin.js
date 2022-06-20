@@ -18,10 +18,9 @@ const login = async (request, response, pool) => {
           .add(process.env.TOKEN_EXPIRE_MINUTE, "m")
           .format("YYYY-MM-DD HH:mm"),
       });
-      
     } else {
       return response.status(401).json({
-        message: "Хэрэглэгчийн нэр эсвэл нууц үг буруу байн!",
+        message: "Хэрэглэгчийн нэр эсвэл нууц үг буруу байна!",
       });
     }
   } catch (error) {
@@ -30,28 +29,14 @@ const login = async (request, response, pool) => {
     return;
   }
 };
-
-const getUsers = async (request, response, pool) => {
-  try {
-    const collection = pool.collection("users");
-    const query = {};
-    const projection = { _id: 0, "password": 0, "username" : 0, roles: 0, priority : 0 };
-    const rows = await collection.find({}).sort({priority:1}).toArray();
-    return response.status(200).json({
-      data: rows,
-    });
-  } catch (error) {
-    response.status(500).send({ error: error.message });
-    logger.error(`${request.ip} ${error.message}`);
-    return;
-  }
-};
-
 const getUser = async (request, response, pool) => {
   try {
-    console.log(request.body)
+    const { id } = request.body;
+    console.log('my id ==>', id)
     const collection = pool.collection("users");
-    const rows = await collection.find({}).toArray();
+    const query = { "_id" : new mongodb.ObjectID(id)  }
+    const rows = await collection.findOne(query);
+    console.log(rows)
     return response.status(200).json({
       data: rows,
     });
@@ -61,7 +46,6 @@ const getUser = async (request, response, pool) => {
     return;
   }
 };
-
 const insertUser = async (request, response, pool) => {
   try {
     const collection = pool.collection("users");
@@ -73,7 +57,6 @@ const insertUser = async (request, response, pool) => {
     return; 
   }
 };
-
 const deleteUser = async (request, response, pool) => {
   try {
     const { _id } = request.body;
@@ -82,7 +65,7 @@ const deleteUser = async (request, response, pool) => {
       _id: new mongodb.ObjectID(_id),
     });
     logger.info(`Deleted documents id:${_id} => ${deleteResult.deletedCount}`);
-    return response.status(200).json({ message: "success" });
+    return response.status(200).json({ message: "success`" });
   } catch (error) {
     response.status(500).send({ error: error.message });
     logger.error(`${request.ip} ${error.message}`);
@@ -101,7 +84,7 @@ const updateUser = async (request, response, pool) => {
     const user = await collection.findOne({
       _id: new mongodb.ObjectID(_id),
     });
-    return response.status(200).json({ message: "Амжилттай Засагдлаа" , user});
+    return response.status(200).json({ message: "success" , user});
     console.log(user)
    
   } catch (error) {
@@ -110,8 +93,6 @@ const updateUser = async (request, response, pool) => {
     return;
   }
 };
-
-
 const deleteMessage = async (request, response, pool) => {
   try {
     const { _id } = request.body;
@@ -127,13 +108,68 @@ const deleteMessage = async (request, response, pool) => {
     return;
   }
 };
+const insertNews = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("news");
+    await collection.insertOne(request.body);
+    return response.status(200).json({ message: "success" });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+const deleteNews = async (request, response, pool) => {
+  try {
+    const { _id } = request.body;
+    const collection = pool.collection("news");
+    const deleteResult = await collection.deleteOne({
+      _id: new mongodb.ObjectID(_id),
+    });
+    logger.info(`Deleted documents id:${_id} => ${deleteResult.deletedCount}`);
+    return response.status(200).json({ message: "success" });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+const getMessages = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("messages");
+    const rows = await collection.find({}).toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+const getUsers = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("users");
+    const rows = await collection.find({}).sort({priority:1}).toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
 
 module.exports = {
   login,
-  getUsers,
   getUser,
   insertUser,
   deleteUser,
   updateUser,
-  deleteMessage
+  deleteMessage,
+  insertNews,
+  deleteNews,
+  getMessages,
+  getUsers,
 };
