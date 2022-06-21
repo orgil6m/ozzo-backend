@@ -63,7 +63,7 @@ const getDirectors = async (request, response, pool) => {
 const getCrew = async (request, response, pool) => {
   try {
     const collection = pool.collection("users");
-    const query = { "teacher" : false, "director" : false}
+    const query = { $and : [ {"active" :true} ,{ $or : [{"teacher" : false, "director" : false}, {"teacher" : null, "director" : null}] }]}
     const projection = { _id: 0, "password": 0,  roles: 0, priority : 0 };
     const rows = await collection.find(query).project(projection).sort({priority:1}).toArray();
     return response.status(200).json({

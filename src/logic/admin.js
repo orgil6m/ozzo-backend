@@ -29,6 +29,19 @@ const login = async (request, response, pool) => {
     return;
   }
 };
+const getUsers = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("users");
+    const rows = await collection.find({}).sort({priority:1}).toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
 const getUser = async (request, response, pool) => {
   try {
     const { id } = request.body;
@@ -147,13 +160,61 @@ const getMessages = async (request, response, pool) => {
     return;
   }
 };
-const getUsers = async (request, response, pool) => {
+const getCourses = async (request, response, pool) => {
   try {
-    const collection = pool.collection("users");
-    const rows = await collection.find({}).sort({priority:1}).toArray();
+    const collection = pool.collection("courses");
+    const rows = await collection.find({}).toArray();
     return response.status(200).json({
       data: rows,
     });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+const insertCourse = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("courses");
+    const rows = await collection.find({}).toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+
+const getProgrammes = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("courses");
+    const rows = await collection.find({}).toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+const updateProgramme = async (request, response, pool) => {
+  try {
+    const { _id } = request.body;
+    const collection = pool.collection("users");
+    delete request.body._id;
+     await collection.updateOne(
+        { _id: new mongodb.ObjectID(_id) },
+        { $set: request.body }
+    );
+    const user = await collection.findOne({
+      _id: new mongodb.ObjectID(_id),
+    });
+    return response.status(200).json({ message: "success" , user});
+    console.log(user)
+   
   } catch (error) {
     response.status(500).send({ error: error.message });
     logger.error(`${request.ip} ${error.message}`);
@@ -172,4 +233,5 @@ module.exports = {
   deleteNews,
   getMessages,
   getUsers,
+  getCourses
 };

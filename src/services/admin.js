@@ -10,6 +10,7 @@ const {
   deleteNews,
   getMessages,
   getUsers,
+  getCourses
 } = require("../logic/admin");
 
 const { logger } = require("../common/log");
@@ -100,6 +101,16 @@ module.exports = function (app, connection) {
     }
   });
   app.post("/api/ozzo/getMessages", isAuth,  async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/messages [get]`);
+      console.log("hi")
+      getMessages(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  app.post("/api/ozzo/getCourses", isAuth,  async (req, res) => {
     try {
       logger.info(`${req.ip} /ozzo/messages [get]`);
       console.log("hi")
