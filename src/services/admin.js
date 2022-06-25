@@ -10,7 +10,9 @@ const {
   deleteNews,
   getMessages,
   getUsers,
-  getCourses
+  insertCourse,
+  updateCourse,
+  getCourses,
 } = require("../logic/admin");
 
 const { logger } = require("../common/log");
@@ -103,22 +105,37 @@ module.exports = function (app, connection) {
   app.post("/api/ozzo/getMessages", isAuth,  async (req, res) => {
     try {
       logger.info(`${req.ip} /ozzo/messages [get]`);
-      console.log("hi")
       getMessages(req, res, connection);
     } catch (err) {
       logger.error(`${req.ip} ${err}`);
       res.status(500).json({ error: err.message });
     }
   });
-  app.post("/api/ozzo/getCourses", isAuth,  async (req, res) => {
+  app.post("/api/ozzo/insertCourse", isAuth, async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/courses [post]`);
+      insertCourse(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  app.post("/api/ozzo/getCourses", isAuth, async (req, res) => {
     try {
       logger.info(`${req.ip} /ozzo/messages [get]`);
-      console.log("hi")
-      getMessages(req, res, connection);
+      getCourses(req, res, connection);
     } catch (err) {
       logger.error(`${req.ip} ${err}`);
       res.status(500).json({ error: err.message });
     }
   });
-  
+  app.put("/api/ozzo/updateCourse", isAuth, async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/course [put]`);
+      updateCourse(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
 };

@@ -99,6 +99,21 @@ const postMessage = async (request, response, pool) => {
     return; 
   }
 };
+const getCourses = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("courses");
+    const query = {}
+    const projection = { _id: 0, "updatedBy": 0,  updatedDate: 0,};
+    const rows = await collection.find(query).project(projection).sort().toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
 
 module.exports = {
  getNews,
@@ -108,4 +123,5 @@ module.exports = {
  getCrew,
  getProducts,
  postMessage,
+ getCourses,
 };

@@ -45,11 +45,9 @@ const getUsers = async (request, response, pool) => {
 const getUser = async (request, response, pool) => {
   try {
     const { id } = request.body;
-    console.log('my id ==>', id)
     const collection = pool.collection("users");
     const query = { "_id" : new mongodb.ObjectID(id)  }
     const rows = await collection.findOne(query);
-    console.log(rows)
     return response.status(200).json({
       data: rows,
     });
@@ -98,7 +96,6 @@ const updateUser = async (request, response, pool) => {
       _id: new mongodb.ObjectID(_id),
     });
     return response.status(200).json({ message: "success" , user});
-    console.log(user)
    
   } catch (error) {
     response.status(500).send({ error: error.message });
@@ -160,22 +157,10 @@ const getMessages = async (request, response, pool) => {
     return;
   }
 };
-const getCourses = async (request, response, pool) => {
-  try {
-    const collection = pool.collection("courses");
-    const rows = await collection.find({}).toArray();
-    return response.status(200).json({
-      data: rows,
-    });
-  } catch (error) {
-    response.status(500).send({ error: error.message });
-    logger.error(`${request.ip} ${error.message}`);
-    return;
-  }
-};
 const insertCourse = async (request, response, pool) => {
   try {
     const collection = pool.collection("courses");
+    await collection.insertOne(request.body);
     const rows = await collection.find({}).toArray();
     return response.status(200).json({
       data: rows,
@@ -186,24 +171,10 @@ const insertCourse = async (request, response, pool) => {
     return;
   }
 };
-
-const getProgrammes = async (request, response, pool) => {
-  try {
-    const collection = pool.collection("courses");
-    const rows = await collection.find({}).toArray();
-    return response.status(200).json({
-      data: rows,
-    });
-  } catch (error) {
-    response.status(500).send({ error: error.message });
-    logger.error(`${request.ip} ${error.message}`);
-    return;
-  }
-};
-const updateProgramme = async (request, response, pool) => {
+const updateCourse = async (request, response, pool) => {
   try {
     const { _id } = request.body;
-    const collection = pool.collection("users");
+    const collection = pool.collection("courses");
     delete request.body._id;
      await collection.updateOne(
         { _id: new mongodb.ObjectID(_id) },
@@ -213,8 +184,20 @@ const updateProgramme = async (request, response, pool) => {
       _id: new mongodb.ObjectID(_id),
     });
     return response.status(200).json({ message: "success" , user});
-    console.log(user)
    
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+const getCourses = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("courses");
+    const rows = await collection.find({}).toArray();
+    return response.status(200).json({
+      data: rows,
+    });
   } catch (error) {
     response.status(500).send({ error: error.message });
     logger.error(`${request.ip} ${error.message}`);
@@ -233,5 +216,7 @@ module.exports = {
   deleteNews,
   getMessages,
   getUsers,
+  insertCourse,
+  updateCourse,
   getCourses
 };

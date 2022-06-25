@@ -6,6 +6,7 @@ const {
   getCrew,
   getProducts,
   postMessage,
+  getCourses,
 } = require("../logic/public");
 
 const { logger } = require("../common/log");
@@ -75,4 +76,13 @@ module.exports = function (app, connection) {
       res.status(500).json({ error: err.message });
     }
   })
+  app.get("/api/ozzo/getCourses", async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/messages [get]`);
+      getCourses(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
 };
