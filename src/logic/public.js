@@ -18,7 +18,7 @@ const getNews = async (request, response, pool) => {
 const getArtists = async (request, response, pool) => {
   try {
     const collection = pool.collection("users");
-    const query = {"artist" : true, "teacher" : false, 'director': false };
+    const query = {"artist" : true, "active": true };
     const projection = { _id: 0, "password": 0, "username" : 0, roles: 0, priority : 0 };
     const rows = await collection.find(query).project(projection).sort({priority:1}).toArray();
     return response.status(200).json({
@@ -33,7 +33,7 @@ const getArtists = async (request, response, pool) => {
 const getTeachers = async (request, response, pool) => {
   try {
     const collection = pool.collection("users");
-    const query = { $and : [ { "teacher" : true}, {$or : [{'director': false}, { 'director': null}]}]}
+    const query = { $and : [ { "teacher" : true, "active" : true}, {$or : [{'director': false}, { 'director': null}]}]}
     const projection = { _id: 0, "password": 0,  roles: 0, priority : 0 };
     const rows = await collection.find(query).project(projection).sort({priority:1}).toArray();
     return response.status(200).json({
@@ -48,7 +48,7 @@ const getTeachers = async (request, response, pool) => {
 const getDirectors = async (request, response, pool) => {
   try {
     const collection = pool.collection("users");
-    const query = { "director" : true,  };
+    const query = {"active" :true, "director" : true }
     const projection = { _id: 0, "password": 0,  roles: 0, priority : 0 };
     const rows = await collection.find(query).project(projection).sort({priority:1}).toArray();
     return response.status(200).json({
