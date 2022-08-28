@@ -66,6 +66,15 @@ module.exports = function (app, connection) {
       res.status(500).json({ error: err.message });
     }
   });
+  app.delete("/api/ozzo/updateUser", isAuth, async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/users [DELETE]`);
+      deleteUser(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
   app.delete("/api/ozzo/deleteUser", isAuth, async (req, res) => {
     try {
       logger.info(`${req.ip} /ozzo/users [delete]`);
