@@ -12,6 +12,7 @@ const {
   getUsers,
   insertCourse,
   updateCourse,
+  deleteCourse,
   getCourses,
 } = require("../logic/admin");
 
@@ -133,6 +134,15 @@ module.exports = function (app, connection) {
     try {
       logger.info(`${req.ip} /ozzo/messages [get]`);
       getCourses(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  app.post("/api/ozzo/deleteCourse", isAuth, async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/courses [delete]`);
+      deleteCourse(req, res, connection);
     } catch (err) {
       logger.error(`${req.ip} ${err}`);
       res.status(500).json({ error: err.message });

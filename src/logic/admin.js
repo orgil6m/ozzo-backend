@@ -2,6 +2,7 @@ const { logger } = require("../common/log");
 const moment = require("moment");
 var mongodb = require("mongodb");
 const { calcToken } = require("../common/auth");
+const { request } = require("express");
 
 const login = async (request, response, pool) => {
   try {
@@ -191,6 +192,21 @@ const updateCourse = async (request, response, pool) => {
     return;
   }
 };
+const deleteCourse = async (request, response, pool) => {
+  try {
+    const { _id } = request.body;
+    const collection = pool.collection("courses");
+    const deleteResult = await collection.deleteOne({
+      _id: new mongodb.ObjectID(_id),
+    });
+    logger.info(`Deleted documents id:${_id} => ${deleteResult.deletedCount}`);
+    return response.status(200).json({ message: "success" });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
 const getCourses = async (request, response, pool) => {
   try {
     const collection = pool.collection("courses");
@@ -218,5 +234,6 @@ module.exports = {
   getUsers,
   insertCourse,
   updateCourse,
+  deleteCourse,
   getCourses
 };
