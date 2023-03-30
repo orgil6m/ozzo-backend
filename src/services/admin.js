@@ -1,4 +1,3 @@
-
 const {
   login,
   getUser,
@@ -14,13 +13,15 @@ const {
   updateCourse,
   deleteCourse,
   getCourses,
+  getPositions,
+  getRequests,
+  getFeedBacks,
 } = require("../logic/admin");
 
 const { logger } = require("../common/log");
 const { isAuth } = require("../common/auth");
 
 module.exports = function (app, connection) {
-
   app.post("/api/ozzo/login", async (req, res) => {
     try {
       logger.info(`${req.ip} /api/ozzo/login [POST]`);
@@ -103,7 +104,7 @@ module.exports = function (app, connection) {
       res.status(500).json({ error: err.message });
     }
   });
-  app.delete("/api/ozzo/deleteNews",  isAuth, async (req, res) => {
+  app.delete("/api/ozzo/deleteNews", isAuth, async (req, res) => {
     try {
       logger.info(`${req.ip} /v1/news [delete]`);
       deleteNews(req, res, connection);
@@ -112,7 +113,7 @@ module.exports = function (app, connection) {
       res.status(500).json({ error: err.message });
     }
   });
-  app.post("/api/ozzo/getMessages", isAuth,  async (req, res) => {
+  app.post("/api/ozzo/getMessages", isAuth, async (req, res) => {
     try {
       logger.info(`${req.ip} /ozzo/messages [get]`);
       getMessages(req, res, connection);
@@ -152,6 +153,34 @@ module.exports = function (app, connection) {
     try {
       logger.info(`${req.ip} /ozzo/course [put]`);
       updateCourse(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  app.post("/api/ozzo/getPositions", isAuth, async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/positions [get]`);
+      getPositions(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
+  app.post("/api/ozzo/positions/getRequests", isAuth, async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/positions/getRequests [get]`);
+      getRequests(req, res, connection);
+    } catch (err) {
+      logger.error(`${req.ip} ${err}`);
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post("/api/ozzo/feedbacks/getFeedBacks", isAuth, async (req, res) => {
+    try {
+      logger.info(`${req.ip} /ozzo/feedbacks/getFeedBacks [POST]`);
+      getFeedBacks(req, res, connection);
     } catch (err) {
       logger.error(`${req.ip} ${err}`);
       res.status(500).json({ error: err.message });

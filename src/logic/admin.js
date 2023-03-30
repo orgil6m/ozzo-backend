@@ -14,7 +14,7 @@ const login = async (request, response, pool) => {
         message: "Амжилттай нэвтэрлээ",
         user: rows[0],
         token: calcToken(rows[0].username),
-        loggedTime : moment()  .format("YYYY-MM-DD HH:mm"),
+        loggedTime: moment().format("YYYY-MM-DD HH:mm"),
         tokenExpTime: moment()
           .add(process.env.TOKEN_EXPIRE_MINUTE, "m")
           .format("YYYY-MM-DD HH:mm"),
@@ -33,7 +33,7 @@ const login = async (request, response, pool) => {
 const getUsers = async (request, response, pool) => {
   try {
     const collection = pool.collection("users");
-    const rows = await collection.find({}).sort({priority:1}).toArray();
+    const rows = await collection.find({}).sort({ priority: 1 }).toArray();
     return response.status(200).json({
       data: rows,
     });
@@ -47,7 +47,7 @@ const getUser = async (request, response, pool) => {
   try {
     const { id } = request.body;
     const collection = pool.collection("users");
-    const query = { "_id" : new mongodb.ObjectID(id)  }
+    const query = { _id: new mongodb.ObjectID(id) };
     const rows = await collection.findOne(query);
     return response.status(200).json({
       data: rows,
@@ -66,7 +66,7 @@ const insertUser = async (request, response, pool) => {
   } catch (error) {
     response.status(500).send({ error: error.message });
     logger.error(`${request.ip} ${error.message}`);
-    return; 
+    return;
   }
 };
 const deleteUser = async (request, response, pool) => {
@@ -89,15 +89,14 @@ const updateUser = async (request, response, pool) => {
     const { _id } = request.body;
     const collection = pool.collection("users");
     delete request.body._id;
-     await collection.updateOne(
-        { _id: new mongodb.ObjectID(_id) },
-        { $set: request.body }
+    await collection.updateOne(
+      { _id: new mongodb.ObjectID(_id) },
+      { $set: request.body }
     );
     const user = await collection.findOne({
       _id: new mongodb.ObjectID(_id),
     });
-    return response.status(200).json({ message: "success" , user});
-   
+    return response.status(200).json({ message: "success", user });
   } catch (error) {
     response.status(500).send({ error: error.message });
     logger.error(`${request.ip} ${error.message}`);
@@ -177,15 +176,14 @@ const updateCourse = async (request, response, pool) => {
     const { _id } = request.body;
     const collection = pool.collection("courses");
     delete request.body._id;
-     await collection.updateOne(
-        { _id: new mongodb.ObjectID(_id) },
-        { $set: request.body }
+    await collection.updateOne(
+      { _id: new mongodb.ObjectID(_id) },
+      { $set: request.body }
     );
     const user = await collection.findOne({
       _id: new mongodb.ObjectID(_id),
     });
-    return response.status(200).json({ message: "success" , user});
-   
+    return response.status(200).json({ message: "success", user });
   } catch (error) {
     response.status(500).send({ error: error.message });
     logger.error(`${request.ip} ${error.message}`);
@@ -220,6 +218,65 @@ const getCourses = async (request, response, pool) => {
     return;
   }
 };
+const getPositions = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("positions");
+    const query = {};
+    const projection = {};
+    const rows = await collection
+      .find(query)
+      .project(projection)
+      .sort()
+      .toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+
+const getRequests = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("requests");
+    const query = {};
+    const projection = {};
+    const rows = await collection
+      .find(query)
+      .project(projection)
+      .sort()
+      .toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
+
+const getFeedBacks = async (request, response, pool) => {
+  try {
+    const collection = pool.collection("feedback");
+    const query = {};
+    const projection = {};
+    const rows = await collection
+      .find(query)
+      .project(projection)
+      .sort()
+      .toArray();
+    return response.status(200).json({
+      data: rows,
+    });
+  } catch (error) {
+    response.status(500).send({ error: error.message });
+    logger.error(`${request.ip} ${error.message}`);
+    return;
+  }
+};
 
 module.exports = {
   login,
@@ -235,5 +292,8 @@ module.exports = {
   insertCourse,
   updateCourse,
   deleteCourse,
-  getCourses
+  getCourses,
+  getPositions,
+  getRequests,
+  getFeedBacks,
 };
